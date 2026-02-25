@@ -25,22 +25,18 @@
             --card: #16213e;
             --accent: #6c63ff;
             --accent3: #4cc9f0;
+            --accent-mul: #f7b731;
+            --accent-mul2: #ff6b6b;
             --text: #e0e0ff;
             --muted: #8888aa;
             --border: #2a2a4a;
             --green: #06d6a0;
 
-            /* A4 layout constants (mm) — used for JS calc too via CSS var */
             --a4-pad-v: 14;
-            /* top+bottom padding each side (mm) */
             --a4-pad-h: 15;
-            /* left+right padding each side (mm) */
             --header-h: 28;
-            /* sheet header + info row area (mm)  */
             --row-h: 14;
-            /* one problem row height incl. gap   (mm) */
             --cols: 3;
-            /* grid columns */
         }
 
         body {
@@ -48,6 +44,48 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+        }
+
+        /* ─── Tab Bar ─── */
+        .tab-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .tab-btn {
+            padding: 14px 22px;
+            border: none;
+            background: none;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active-add {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-btn.active-mul {
+            color: var(--accent-mul);
+            border-bottom-color: var(--accent-mul);
         }
 
         /* ─── Control Panel ─── */
@@ -60,9 +98,13 @@
             gap: 18px;
             align-items: flex-end;
             position: sticky;
-            top: 0;
+            top: 47px;
             z-index: 100;
             backdrop-filter: blur(12px);
+        }
+
+        .panel-hidden {
+            display: none !important;
         }
 
         .panel-header {
@@ -76,10 +118,17 @@
         .panel-title {
             font-size: 20px;
             font-weight: 700;
-            background: linear-gradient(90deg, var(--accent), var(--accent3));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        .panel-title-add {
+            background: linear-gradient(90deg, var(--accent), var(--accent3));
+        }
+
+        .panel-title-mul {
+            background: linear-gradient(90deg, var(--accent-mul), var(--accent-mul2));
         }
 
         .panel-badge {
@@ -124,7 +173,6 @@
             box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
         }
 
-        /* badge showing auto-calculated count */
         .per-page-badge {
             font-size: 11px;
             color: var(--accent3);
@@ -187,6 +235,67 @@
             font-weight: 500;
         }
 
+        /* Multiplication tab checkboxes — orange accent */
+        .mul-checkbox .checkbox-item:hover {
+            border-color: var(--accent-mul);
+            background: rgba(247, 183, 49, 0.1);
+        }
+
+        .mul-checkbox .checkbox-item input[type="checkbox"] {
+            accent-color: var(--accent-mul);
+        }
+
+        .mul-radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .mul-radio-group label.group-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .radio-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 5px 9px;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .radio-item:hover {
+            border-color: var(--accent-mul);
+            background: rgba(247, 183, 49, 0.1);
+        }
+
+        .radio-item input[type="radio"] {
+            accent-color: var(--accent-mul);
+            width: 13px;
+            height: 13px;
+            cursor: pointer;
+        }
+
+        .radio-item span {
+            font-size: 11px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -210,6 +319,17 @@
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 24px rgba(108, 99, 255, 0.5);
+        }
+
+        .btn-primary-mul {
+            background: linear-gradient(135deg, var(--accent-mul), var(--accent-mul2));
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(247, 183, 49, 0.4);
+        }
+
+        .btn-primary-mul:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(247, 183, 49, 0.5);
         }
 
         .btn-print {
@@ -240,9 +360,7 @@
             min-height: calc(100vh - 140px);
         }
 
-        /* ─── A4 Sheet ─────────────────────────────────────
-       Fixed 210mm × 297mm. overflow:hidden keeps it exact.
-    ─────────────────────────────────────────────────── */
+        /* ─── A4 Sheet ─── */
         .a4-sheet {
             width: 210mm;
             height: 297mm;
@@ -303,7 +421,7 @@
             margin-left: 3px;
         }
 
-        /* ── Problems Grid ── */
+        /* ── Problems Grid (덧셈·뺄셈) ── */
         .problems-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -324,7 +442,6 @@
             font-weight: 800;
             font-family: 'Nanum Gothic', sans-serif;
             height: calc(var(--row-h) * 1mm);
-            /* fixed row height = 14mm */
             overflow: hidden;
         }
 
@@ -379,6 +496,92 @@
             padding: 30px 0;
         }
 
+        /* ── 구구단 Grid ── */
+        .mul-grid {
+            display: grid;
+            gap: 5px 8px;
+            flex: 1;
+            align-content: start;
+        }
+
+        /* 2-col layout for 단별 세로 표 */
+        .mul-grid-2col {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .mul-grid-3col {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .mul-grid-4col {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        /* 구구단 카드: 한 단(段) 전체 */
+        .mul-table-card {
+            border: 1.5px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        .mul-table-title {
+            background: #222;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            padding: 3px 0;
+            letter-spacing: 0.05em;
+        }
+
+        .mul-row {
+            display: flex;
+            align-items: center;
+            padding: 2px 7px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: 'Nanum Gothic', sans-serif;
+            gap: 4px;
+        }
+
+        .mul-row:first-of-type {
+            border-top: none;
+        }
+
+        .mul-blank {
+            display: inline-block;
+            width: 22px;
+            height: 18px;
+            border: 2px solid #1a1a1a;
+            border-radius: 3px;
+            background: #fff;
+            flex-shrink: 0;
+            vertical-align: middle;
+        }
+
+        .mul-eq {
+            color: #444;
+            margin: 0 2px;
+            font-size: 12px;
+        }
+
+        .mul-op {
+            font-weight: 900;
+            color: #222;
+            font-size: 13px;
+        }
+
+        /* ── 연습문제 스타일 (섞인 문제) ── */
+        .mul-practice-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px 10px;
+            flex: 1;
+            align-content: start;
+        }
+
         /* ─── Print Styles ─── */
         @media print {
             @page {
@@ -391,6 +594,7 @@
                 background: white !important;
             }
 
+            .tab-bar,
             .control-panel {
                 display: none !important;
             }
@@ -420,14 +624,19 @@
 
 <body>
 
-    <!-- ─── Control Panel ─── -->
-    <div class="control-panel">
+    <!-- ─── Tab Bar ─── -->
+    <div class="tab-bar">
+        <button class="tab-btn active-add" id="tab-add" onclick="switchTab('add')">➕ 덧셈·뺄셈</button>
+        <button class="tab-btn" id="tab-mul" onclick="switchTab('mul')">✖️ 구구단</button>
+    </div>
+
+    <!-- ─── Panel: 덧셈·뺄셈 ─── -->
+    <div class="control-panel" id="panel-add">
         <div class="panel-header">
-            <span class="panel-title">✏️ 수학 학습지 생성기</span>
+            <span class="panel-title panel-title-add">✏️ 덧셈·뺄셈 학습지 생성기</span>
             <span class="panel-badge">설정 변경 시 자동 업데이트</span>
         </div>
 
-        <!-- 자릿수 -->
         <div class="control-group">
             <label>첫 번째 수 자릿수</label>
             <input type="number" id="digits1" value="1" min="1" max="4" />
@@ -437,16 +646,13 @@
             <input type="number" id="digits2" value="1" min="1" max="4" />
         </div>
 
-        <!-- 장 수 -->
         <div class="control-group">
             <label>장 수 (페이지)</label>
             <input type="number" id="pageCount" value="1" min="1" max="20" />
         </div>
 
-        <!-- 자동 계산 표시 -->
         <div class="per-page-badge" id="per-page-info">장당 — 문제</div>
 
-        <!-- 유형 선택 -->
         <div class="checkbox-group">
             <label class="group-label">문제 유형</label>
             <div class="checkbox-row">
@@ -459,21 +665,125 @@
             </div>
         </div>
 
-        <!-- 학습지 제목 -->
         <div class="control-group">
             <label>학습지 제목</label>
             <input type="text" id="sheetTitle" value="덧셈·뺄셈 학습지" />
         </div>
 
-        <!-- 시작 번호 -->
         <div class="control-group">
             <label>시작 번호</label>
             <input type="number" id="sheetNoStart" value="1" min="1" max="999" />
         </div>
 
-        <!-- 버튼 -->
         <div class="btn-actions">
-            <button class="btn btn-primary" onclick="generateWorksheet()">🔄 새로 생성</button>
+            <button class="btn btn-primary" onclick="generateAddSub()">🔄 새로 생성</button>
+            <button class="btn btn-print" onclick="window.print()">🖨️ 프린트</button>
+        </div>
+    </div>
+
+    <!-- ─── Panel: 구구단 ─── -->
+    <div class="control-panel panel-hidden" id="panel-mul">
+        <div class="panel-header">
+            <span class="panel-title panel-title-mul">✖️ 구구단 학습지 생성기</span>
+            <span class="panel-badge">설정 변경 시 자동 업데이트</span>
+        </div>
+
+        <!-- 단 선택 -->
+        <div class="checkbox-group mul-checkbox">
+            <label class="group-label">단 선택</label>
+            <div class="checkbox-row" id="mul-dan-row">
+                <!-- 2단~9단 동적 삽입 -->
+            </div>
+        </div>
+
+        <!-- 문제 형식 -->
+        <div class="mul-radio-group">
+            <label class="group-label">문제 형식</label>
+            <div class="radio-row">
+                <label class="radio-item">
+                    <input type="radio" name="mulStyle" value="table" />
+                    <span>단별 표 (세로)</span>
+                </label>
+                <label class="radio-item">
+                    <input type="radio" name="mulStyle" value="practice" checked />
+                    <span>연습문제 (섞음)</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 빈칸 위치 (표 모드: 라디오) -->
+        <div class="mul-radio-group" id="mul-blank-group" style="display:none">
+            <label class="group-label">빈칸 위치</label>
+            <div class="radio-row">
+                <label class="radio-item">
+                    <input type="radio" name="mulBlank" value="answer" checked />
+                    <span>□ × □ = ?</span>
+                </label>
+                <label class="radio-item">
+                    <input type="radio" name="mulBlank" value="multiplier" />
+                    <span>□ × ? = □</span>
+                </label>
+                <label class="radio-item">
+                    <input type="radio" name="mulBlank" value="multiplicand" />
+                    <span>? × □ = □</span>
+                </label>
+                <label class="radio-item">
+                    <input type="radio" name="mulBlank" value="mixed" />
+                    <span>섞음</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 빈칸 위치 (연습문제 모드: 체크박스) -->
+        <div class="checkbox-group mul-checkbox" id="mul-practice-blank-group">
+            <label class="group-label">빈칸 위치 선택</label>
+            <div class="checkbox-row">
+                <label class="checkbox-item">
+                    <input type="checkbox" id="pb-answer" checked />
+                    <span>□ × □ = ?</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="pb-multiplier" checked />
+                    <span>□ × ? = □</span>
+                </label>
+                <label class="checkbox-item">
+                    <input type="checkbox" id="pb-multiplicand" checked />
+                    <span>? × □ = □</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 순서 섞기 (표 모드) -->
+        <div class="checkbox-group" id="mul-shuffle-wrap" style="display:none">
+            <label class="group-label">순서</label>
+            <div class="checkbox-row">
+                <label class="checkbox-item mul-checkbox">
+                    <input type="checkbox" id="mulShuffle" />
+                    <span>1~9 순서 섞기</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 장 수 -->
+        <div class="control-group">
+            <label>장 수 (페이지)</label>
+            <input type="number" id="mulPageCount" value="1" min="1" max="20" />
+        </div>
+
+        <!-- 제목 -->
+        <div class="control-group">
+            <label>학습지 제목</label>
+            <input type="text" id="mulSheetTitle" value="구구단 학습지" style="width:160px" />
+        </div>
+
+        <!-- 시작 번호 -->
+        <div class="control-group">
+            <label>시작 번호</label>
+            <input type="number" id="mulSheetNoStart" value="1" min="1" max="999" />
+        </div>
+
+        <div class="btn-actions">
+            <button class="btn btn-primary-mul" onclick="generateMul()">🔄 새로 생성</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ 프린트</button>
         </div>
     </div>
@@ -484,20 +794,35 @@
     </div>
 
     <script>
-        // ─── Constants (match CSS vars) ───────────────
+        // ══════════════════════════════════════════════
+        //  Tab switching
+        // ══════════════════════════════════════════════
+        let currentTab = 'add';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tab-add').className = 'tab-btn' + (tab === 'add' ? ' active-add' : '');
+            document.getElementById('tab-mul').className = 'tab-btn' + (tab === 'mul' ? ' active-mul' : '');
+            document.getElementById('panel-add').classList.toggle('panel-hidden', tab !== 'add');
+            document.getElementById('panel-mul').classList.toggle('panel-hidden', tab !== 'mul');
+            if (tab === 'add') generateAddSub();
+            else generateMul();
+        }
+
+        // ══════════════════════════════════════════════
+        //  ─── 덧셈·뺄셈 ───────────────────────────────
+        // ══════════════════════════════════════════════
         const A4_H_MM = 297;
-        const PAD_V_MM = 14;   // top + bottom padding (each)
-        const HEADER_MM = 28;   // header + info-row height
-        const ROW_H_MM = 14;   // one problem row height incl. gap
+        const PAD_V_MM = 14;
+        const HEADER_MM = 28;
+        const ROW_H_MM = 14;
         const COLS = 3;
+        const AVAIL_MM = A4_H_MM - PAD_V_MM * 2 - HEADER_MM;
+        const ROWS_PER_PAGE = Math.floor(AVAIL_MM / ROW_H_MM);
+        const PROBLEMS_PER_PAGE = ROWS_PER_PAGE * COLS;
 
-        // usable height for problems
-        const AVAIL_MM = A4_H_MM - PAD_V_MM * 2 - HEADER_MM;  // 297-28-28=241
-        const ROWS_PER_PAGE = Math.floor(AVAIL_MM / ROW_H_MM);   // ~17 rows
-        const PROBLEMS_PER_PAGE = ROWS_PER_PAGE * COLS;           // ~51
-
-        // ─── Utilities ────────────────────────────────
         function getVal(id) { return parseInt(document.getElementById(id).value) || 0; }
+        function getStr(id) { return document.getElementById(id).value || ''; }
 
         function randN(digits) {
             const min = digits === 1 ? 1 : Math.pow(10, digits - 1);
@@ -512,11 +837,6 @@
             }
         }
 
-        // ─── Problem Builder ──────────────────────────
-        /**
-         * d2 자릿수 범위 안에서 big을 넘지 않는 빼는 수를 반환.
-         * d2 자릿수 최솟값이 big보다 크면 1~big 사이로 fallback.
-         */
         function safeSubtrahend(big, d2) {
             const lo = d2 === 1 ? 1 : Math.pow(10, d2 - 1);
             const hi = Math.min(big, Math.pow(10, d2) - 1);
@@ -531,79 +851,58 @@
             const eq = '<span class="eq-symbol">=</span>';
 
             switch (type) {
-                /* ─ 덧셈 ─ */
-                case 1: { // a + b = □
-                    const a = randN(d1), b = randN(d2);
-                    return `${a} ${plus} ${b} ${eq} ${box}`;
-                }
-                case 2: { // a + □ = sum
-                    const a = randN(d1), b = randN(d2);
-                    return `${a} ${plus} ${box} ${eq} ${a + b}`;
-                }
-                case 3: { // □ + b = sum
-                    const a = randN(d1), b = randN(d2);
-                    return `${box} ${plus} ${b} ${eq} ${a + b}`;
-                }
-                /* ─ 뺄셈: 피감수를 d1 자릿수로 직접 생성 ─ */
-                case 4: { // big - b = □  (big = d1 자릿수)
-                    const big = randN(d1);
-                    const b = safeSubtrahend(big, d2);
-                    return `${big} ${minus} ${b} ${eq} ${box}`;
-                }
-                case 5: { // big - □ = result
-                    const big = randN(d1);
-                    const b = safeSubtrahend(big, d2);
-                    return `${big} ${minus} ${box} ${eq} ${big - b}`;
-                }
-                case 6: { // □ - b = result  (□ = d1 자릿수)
+                case 1: { const a = randN(d1), b = randN(d2); return `${a} ${plus} ${b} ${eq} ${box}`; }
+                case 2: { const a = randN(d1), b = randN(d2); return `${a} ${plus} ${box} ${eq} ${a + b}`; }
+                case 3: { const a = randN(d1), b = randN(d2); return `${box} ${plus} ${b} ${eq} ${a + b}`; }
+                case 4: { const big = randN(d1); const b = safeSubtrahend(big, d2); return `${big} ${minus} ${b} ${eq} ${box}`; }
+                case 5: { const big = randN(d1); const b = safeSubtrahend(big, d2); return `${big} ${minus} ${box} ${eq} ${big - b}`; }
+                case 6: {
                     const b = randN(d2);
                     const lo = Math.max(d1 === 1 ? 1 : Math.pow(10, d1 - 1), b);
                     const hi = Math.pow(10, d1) - 1;
-                    const q = lo <= hi
-                        ? Math.floor(Math.random() * (hi - lo + 1)) + lo
-                        : b + 1;
+                    const q = lo <= hi ? Math.floor(Math.random() * (hi - lo + 1)) + lo : b + 1;
                     return `${box} ${minus} ${b} ${eq} ${q - b}`;
                 }
-                default: {
-                    const a = randN(d1), b = randN(d2);
-                    return `${a} ${plus} ${b} ${eq} ${box}`;
-                }
+                default: { const a = randN(d1), b = randN(d2); return `${a} ${plus} ${b} ${eq} ${box}`; }
             }
         }
 
-        // ─── Build one A4 sheet DOM element ───────────
-        function buildSheet(pageIndex, startProblemNum, count, enabled, d1, d2, title, sheetNo) {
+        function escHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function makeSheetShell(title, sheetNo, pageIndex) {
             const sheet = document.createElement('div');
             sheet.className = 'a4-sheet';
-
             const now = new Date();
             const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
-
             sheet.innerHTML = `
-      <div class="sheet-header">
-        <div class="sheet-title">${escHtml(title)}</div>
-        <div class="sheet-meta">No. ${sheetNo + pageIndex}<br/>${dateStr}</div>
-      </div>
-      <div class="sheet-info-row">
-        <div class="sheet-info-item">이름<span class="sheet-info-line"></span></div>
-        <div class="sheet-info-item">날짜<span class="sheet-info-line"></span></div>
-        <div class="sheet-info-item">점수<span class="sheet-info-line"></span></div>
-      </div>
-      <div class="problems-grid" id="grid-${pageIndex}"></div>
-    `;
+        <div class="sheet-header">
+          <div class="sheet-title">${escHtml(title)}</div>
+          <div class="sheet-meta">No. ${sheetNo + pageIndex}<br/>${dateStr}</div>
+        </div>
+        <div class="sheet-info-row">
+          <div class="sheet-info-item">이름<span class="sheet-info-line"></span></div>
+          <div class="sheet-info-item">날짜<span class="sheet-info-line"></span></div>
+          <div class="sheet-info-item">점수<span class="sheet-info-line"></span></div>
+        </div>
+      `;
+            return sheet;
+        }
 
-            const grid = sheet.querySelector(`#grid-${pageIndex}`);
+        function buildAddSubSheet(pageIndex, startProblemNum, count, enabled, d1, d2, title, sheetNo) {
+            const sheet = makeSheetShell(title, sheetNo, pageIndex);
+            const grid = document.createElement('div');
+            grid.className = 'problems-grid';
+            sheet.appendChild(grid);
 
             if (enabled.length === 0) {
                 grid.innerHTML = '<div class="no-problems">문제 유형을 하나 이상 선택하세요.</div>';
                 return sheet;
             }
 
-            // Generate count problems for this page
             const problems = [];
-            for (let i = 0; i < count; i++) {
-                problems.push({ type: enabled[i % enabled.length], html: '' });
-            }
+            for (let i = 0; i < count; i++) problems.push({ type: enabled[i % enabled.length] });
             shuffleArray(problems);
 
             problems.forEach((p, i) => {
@@ -617,49 +916,248 @@
             return sheet;
         }
 
-        function escHtml(str) {
-            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        // ─── Main Generate ────────────────────────────
-        function generateWorksheet() {
+        function generateAddSub() {
             const d1 = Math.max(1, getVal('digits1'));
             const d2 = Math.max(1, getVal('digits2'));
             const pages = Math.max(1, getVal('pageCount'));
             const sheetNo = Math.max(1, getVal('sheetNoStart'));
-            const title = document.getElementById('sheetTitle').value || '수학 학습지';
+            const title = getStr('sheetTitle') || '수학 학습지';
 
             const enabled = [];
             for (let i = 1; i <= 6; i++) {
                 if (document.getElementById('t' + i).checked) enabled.push(i);
             }
 
-            // Update badge
             document.getElementById('per-page-info').textContent =
                 `장당 ${PROBLEMS_PER_PAGE}문제 (${ROWS_PER_PAGE}행 × ${COLS}열)`;
 
-            // Clear preview
             const preview = document.getElementById('preview-area');
             preview.innerHTML = '';
 
-            let problemCounter = 1;
+            let counter = 1;
             for (let p = 0; p < pages; p++) {
-                const sheet = buildSheet(p, problemCounter, PROBLEMS_PER_PAGE, enabled, d1, d2, title, sheetNo);
+                const sheet = buildAddSubSheet(p, counter, PROBLEMS_PER_PAGE, enabled, d1, d2, title, sheetNo);
                 preview.appendChild(sheet);
-                problemCounter += PROBLEMS_PER_PAGE;
+                counter += PROBLEMS_PER_PAGE;
             }
         }
 
-        // ─── Auto-regenerate on change ─────────────────
-        ['digits1', 'digits2', 'pageCount', 'sheetNoStart', 'sheetTitle'].forEach(id => {
-            document.getElementById(id).addEventListener('input', generateWorksheet);
-        });
-        for (let i = 1; i <= 6; i++) {
-            document.getElementById('t' + i).addEventListener('change', generateWorksheet);
+        // ══════════════════════════════════════════════
+        //  ─── 구구단 ───────────────────────────────────
+        // ══════════════════════════════════════════════
+
+        // Build dan checkboxes 2~9
+        (function buildDanCheckboxes() {
+            const row = document.getElementById('mul-dan-row');
+            for (let d = 2; d <= 9; d++) {
+                const lbl = document.createElement('label');
+                lbl.className = 'checkbox-item';
+                lbl.innerHTML = `<input type="checkbox" id="md${d}" checked /><span>${d}단</span>`;
+                row.appendChild(lbl);
+            }
+        })();
+
+        function getSelectedDans() {
+            const dans = [];
+            for (let d = 2; d <= 9; d++) {
+                if (document.getElementById('md' + d).checked) dans.push(d);
+            }
+            return dans;
         }
 
-        // ─── Initial load ─────────────────────────────
-        generateWorksheet();
+        function getMulStyle() {
+            return document.querySelector('input[name="mulStyle"]:checked').value;
+        }
+
+        function getMulBlank() {
+            return document.querySelector('input[name="mulBlank"]:checked').value;
+        }
+
+        // Build a single multiplication row HTML
+        // blankPos: 'answer' | 'multiplier' | 'multiplicand'
+        function mulRowHtml(n, k, blankPos) {
+            const ans = n * k;
+            const box = '<span class="mul-blank"></span>';
+            const times = '<span class="mul-op">×</span>';
+            const eq = '<span class="mul-eq">=</span>';
+
+            let lhs, rhs;
+            if (blankPos === 'answer') {
+                lhs = `${n} ${times} ${k}`; rhs = box;
+            } else if (blankPos === 'multiplier') {
+                lhs = `${n} ${times} ${box}`; rhs = ans;
+            } else { // multiplicand
+                lhs = `${box} ${times} ${k}`; rhs = ans;
+            }
+            return `<div class="mul-row">${lhs} ${eq} ${rhs}</div>`;
+        }
+
+        // choose blank position according to setting (supports 'mixed')
+        function resolveBlankPos(i, setting) {
+            if (setting === 'mixed') {
+                const opts = ['answer', 'multiplier', 'multiplicand'];
+                return opts[i % opts.length];
+            }
+            return setting;
+        }
+
+        // ── 단별 표 레이아웃 ──
+        // Returns a sheet DOM element
+        function buildMulTableSheet(dans, pageIndex, title, sheetNo, doShuffle, blankSetting) {
+            const sheet = makeSheetShell(title, sheetNo, pageIndex);
+            const cols = dans.length <= 2 ? 2 : dans.length <= 3 ? 3 : 4;
+            const grid = document.createElement('div');
+            grid.className = `mul-grid mul-grid-${cols}col`;
+            sheet.appendChild(grid);
+
+            dans.forEach((n, idx) => {
+                const card = document.createElement('div');
+                card.className = 'mul-table-card';
+
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'mul-table-title';
+                titleDiv.textContent = `${n}단`;
+                card.appendChild(titleDiv);
+
+                let seq = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                if (doShuffle) shuffleArray(seq);
+
+                seq.forEach((k, i) => {
+                    const blankPos = resolveBlankPos(i, blankSetting);
+                    card.innerHTML += mulRowHtml(n, k, blankPos);
+                });
+
+                grid.appendChild(card);
+            });
+
+            return sheet;
+        }
+
+        // ── 연습문제(섞음) 레이아웃 ──
+        function buildMulPracticeSheet(dans, pageIndex, startNum, count, title, sheetNo) {
+            const sheet = makeSheetShell(title, sheetNo, pageIndex);
+            const grid = document.createElement('div');
+            grid.className = 'mul-practice-grid';
+            sheet.appendChild(grid);
+
+            if (dans.length === 0) {
+                grid.innerHTML = '<div class="no-problems">단을 하나 이상 선택하세요.</div>';
+                return sheet;
+            }
+
+            // pool: all combinations from selected dans
+            const pool = [];
+            dans.forEach(n => {
+                for (let k = 1; k <= 9; k++) pool.push({ n, k });
+            });
+
+            const problems = [];
+            for (let i = 0; i < count; i++) problems.push(pool[Math.floor(Math.random() * pool.length)]);
+            shuffleArray(problems);
+
+            // blank position pool from checkboxes
+            const blankOpts = [];
+            if (document.getElementById('pb-answer').checked) blankOpts.push('answer');
+            if (document.getElementById('pb-multiplier').checked) blankOpts.push('multiplier');
+            if (document.getElementById('pb-multiplicand').checked) blankOpts.push('multiplicand');
+            if (blankOpts.length === 0) blankOpts.push('answer'); // fallback
+            problems.forEach((p, i) => {
+                const blankPos = blankOpts[Math.floor(Math.random() * blankOpts.length)];
+                const ans = p.n * p.k;
+                const box = '<span class="blank-box"></span>';
+                const times = '<span class="op-symbol">×</span>';
+                const eq = '<span class="eq-symbol">=</span>';
+
+                let expr;
+                if (blankPos === 'answer') {
+                    expr = `${p.n} ${times} ${p.k} ${eq} ${box}`;
+                } else if (blankPos === 'multiplier') {
+                    expr = `${p.n} ${times} ${box} ${eq} ${ans}`;
+                } else {
+                    expr = `${box} ${times} ${p.k} ${eq} ${ans}`;
+                }
+
+                const item = document.createElement('div');
+                item.className = 'problem-item';
+                item.innerHTML = `<span class="problem-num">${startNum + i}</span><div class="problem-expr">${expr}</div>`;
+                grid.appendChild(item);
+            });
+
+            return sheet;
+        }
+
+        function generateMul() {
+            const dans = getSelectedDans();
+            const style = getMulStyle();
+            const blankSetting = getMulBlank();
+            const doShuffle = document.getElementById('mulShuffle').checked;
+            const pages = Math.max(1, getVal('mulPageCount'));
+            const sheetNo = Math.max(1, getVal('mulSheetNoStart'));
+            const title = getStr('mulSheetTitle') || '구구단 학습지';
+
+            const preview = document.getElementById('preview-area');
+            preview.innerHTML = '';
+
+            if (style === 'table') {
+                // Pack dans across pages: fit as many per page as looks good
+                // Max cols = 4 → max dans per page = 4; otherwise all on one page if ≤4
+                const danGroupSize = dans.length <= 8 ? Math.ceil(dans.length / pages) : 4;
+                let counter = 1;
+                for (let p = 0; p < pages; p++) {
+                    const slice = dans.slice(p * danGroupSize, (p + 1) * danGroupSize);
+                    if (slice.length === 0) break;
+                    const sheet = buildMulTableSheet(slice, p, title, sheetNo, doShuffle, blankSetting);
+                    preview.appendChild(sheet);
+                }
+            } else {
+                // Practice mode: same PROBLEMS_PER_PAGE
+                let counter = 1;
+                for (let p = 0; p < pages; p++) {
+                    const sheet = buildMulPracticeSheet(dans, p, counter, PROBLEMS_PER_PAGE, title, sheetNo);
+                    preview.appendChild(sheet);
+                    counter += PROBLEMS_PER_PAGE;
+                }
+            }
+        }
+
+        // ══════════════════════════════════════════════
+        //  Auto-update listeners
+        // ══════════════════════════════════════════════
+
+        // 덧셈·뺄셈
+        ['digits1', 'digits2', 'pageCount', 'sheetNoStart', 'sheetTitle'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => { if (currentTab === 'add') generateAddSub(); });
+        });
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById('t' + i).addEventListener('change', () => { if (currentTab === 'add') generateAddSub(); });
+        }
+
+        // 구구단
+        for (let d = 2; d <= 9; d++) {
+            document.getElementById('md' + d).addEventListener('change', () => { if (currentTab === 'mul') generateMul(); });
+        }
+        ['mulPageCount', 'mulSheetNoStart', 'mulSheetTitle'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => { if (currentTab === 'mul') generateMul(); });
+        });
+        document.querySelectorAll('input[name="mulStyle"]').forEach(r => {
+            r.addEventListener('change', () => {
+                const isTable = document.querySelector('input[name="mulStyle"]:checked').value === 'table';
+                document.getElementById('mul-blank-group').style.display = isTable ? '' : 'none';
+                document.getElementById('mul-shuffle-wrap').style.display = isTable ? '' : 'none';
+                document.getElementById('mul-practice-blank-group').style.display = isTable ? 'none' : '';
+                if (currentTab === 'mul') generateMul();
+            });
+        });
+        ['pb-answer', 'pb-multiplier', 'pb-multiplicand'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => { if (currentTab === 'mul') generateMul(); });
+        });
+        document.querySelectorAll('input[name="mulBlank"]').forEach(r => {
+            r.addEventListener('change', () => { if (currentTab === 'mul') generateMul(); });
+        });
+        document.getElementById('mulShuffle').addEventListener('change', () => { if (currentTab === 'mul') generateMul(); });
+
+        // ── Initial load ──
+        generateAddSub();
     </script>
 </body>
 
