@@ -9,6 +9,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Nanum+Gothic:wght@400;700;800&display=swap"
         rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         /* ─── Reset & Variables ─── */
         *,
@@ -349,6 +350,23 @@
             align-items: flex-end;
         }
 
+        .btn-pdf {
+            background: linear-gradient(135deg, #e84393, #c0392b);
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(232, 67, 147, 0.4);
+        }
+
+        .btn-pdf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(232, 67, 147, 0.55);
+        }
+
+        .btn-pdf:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* ─── Preview Area ─── */
         .preview-area {
             display: flex;
@@ -678,6 +696,7 @@
         <div class="btn-actions">
             <button class="btn btn-primary" onclick="generateAddSub()">🔄 새로 생성</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ 프린트</button>
+            <button class="btn btn-pdf" id="btn-pdf-add" onclick="savePDF()">📄 PDF 저장</button>
         </div>
     </div>
 
@@ -785,6 +804,7 @@
         <div class="btn-actions">
             <button class="btn btn-primary-mul" onclick="generateMul()">🔄 새로 생성</button>
             <button class="btn btn-print" onclick="window.print()">🖨️ 프린트</button>
+            <button class="btn btn-pdf" id="btn-pdf-mul" onclick="savePDF()">📄 PDF 저장</button>
         </div>
     </div>
 
@@ -1155,6 +1175,62 @@
             r.addEventListener('change', () => { if (currentTab === 'mul') generateMul(); });
         });
         document.getElementById('mulShuffle').addEventListener('change', () => { if (currentTab === 'mul') generateMul(); });
+
+        // ══════════════════════════════════════════════
+        //  PDF 저장
+        // ══════════════════════════════════════════════
+        function savePDF() {
+            const preview = document.getElementById('preview-area');
+            if (!preview || !preview.children.length) return;
+
+            const btnIds = ['btn-pdf-add', 'btn-pdf-mul'];
+            btnIds.forEach(id => {
+                const b = document.getElementById(id);
+                if (b) { b.disabled = true; b.textContent = '⏳ 생성 중...'; }
+            });
+
+            const title = document.getElementById(
+                currentTab === 'add' ? 'sheetTitle' : 'mulSheetTitle'
+            ).value || '학습지';
+
+            // 배경색/패딩/minHeight 임시 변경 (빈 페이지 방지)
+            const prevBg = preview.style.background;
+            const prevPad = preview.style.padding;
+            const prevGap = preview.style.gap;
+            const prevMin = preview.style.minHeight;
+            preview.style.background = '#fff';
+            preview.style.padding = '0';
+            preview.style.gap = '0';
+            preview.style.minHeight = 'unset';
+
+            const opt = {
+                margin: 0,
+                filename: `${title}.pdf`,
+                image: { type: 'jpeg', quality: 0.97 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    scrollX: 0,
+                    scrollY: -window.scrollY
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'] }
+            };
+
+            html2pdf().set(opt).from(preview).save()
+                .finally(() => {
+                    // 원래 스타일 복원
+                    preview.style.background = prevBg;
+                    preview.style.padding = prevPad;
+                    preview.style.gap = prevGap;
+                    preview.style.minHeight = prevMin;
+                    btnIds.forEach(id => {
+                        const b = document.getElementById(id);
+                        if (b) { b.disabled = false; b.textContent = '📄 PDF 저장'; }
+                    });
+                });
+        }
 
         // ── Initial load ──
         generateAddSub();
